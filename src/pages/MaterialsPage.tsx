@@ -27,9 +27,24 @@ function Row(props: { row: Side[], onRowChange: Function, onRowDelete: Function,
   const [row, setRow] = useState(props.row)
   const [open, setOpen] = useState(false)
 
-  const change = (index: number, partial: Partial<Side>) => {
+  const [changed, setChanged] = useState(false)
+
+  const change = (index: number, partial: Object) => {
     console.log(row)
+    console.log(partial)
+    if (partial.hasOwnProperty('length')) {
+      console.log('Hello')
+      if (partial.length !== '') {
+        if (!isNaN(partial?.length) && !partial.length.toString().endsWith('.')){
+          console.log('Hello 2')
+          partial.length = parseFloat(partial.length)
+        }
+      }
+
+    }
+    console.log(partial)
     setRow(row.map((el, i) => i === index ? {...el, ...partial} : el))
+
     console.log(row)
   }
 
@@ -116,7 +131,7 @@ function Row(props: { row: Side[], onRowChange: Function, onRowDelete: Function,
                           <TableCell >
                             <TextField
                               onClick={e => e.stopPropagation()}
-                              onChange={(e) => { if (Number(e.target.value) >= 0) change(index, {length: Number(e.target.value)}) } }
+                              onChange={(e) => { change(index, {length: e.target.value}) } }
                               value={row.length} label={'Length'} variant={'outlined'} size={'small'}/>
                           </TableCell>
                           {/*<TableCell align={'center'}>*/}
@@ -158,7 +173,7 @@ export enum SideType {
 
 export type Side = {
   type?: SideType,
-  length?: number,
+  length?: string,
   isOpen?: boolean
 }
 
